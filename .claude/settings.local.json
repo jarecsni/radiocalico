@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm start)",
+      "WebFetch(domain:d3d4yli4hf5bmh.cloudfront.net)"
+    ],
+    "deny": []
+  }
+}

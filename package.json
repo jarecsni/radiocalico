@@ -1,0 +1,14 @@
+{
+  "name": "user-prototype",
+  "version": "1.0.0",
+  "description": "Prototype website with user management",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "sqlite3": "^5.1.6",
+    "path": "^0.12.7"
+  }
+}

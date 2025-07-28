@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radio Calico - Live Stream</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Open+Sans:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: "Open Sans", "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #FFFFFF;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .header {
+            width: 100%;
+            background: #38A29D;
+            padding: 16px 0;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .header .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        
+        .header .logo {
+            width: 60px;
+            height: 60px;
+        }
+        
+        .header h1 {
+            font-family: "Montserrat", sans-serif;
+            font-weight: 700;
+            font-size: 2rem;
+            color: #FFFFFF;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .main-content {
+            max-width: 1200px;
+            width: 100%;
+            padding: 64px 24px;
+        }
+        
+        .radio-player {
+            background: #F5EADA;
+            padding: 48px;
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        
+        .status {
+            margin: 32px 0;
+            padding: 16px;
+            border-radius: 4px;
+            font-weight: 500;
+            font-family: "Open Sans", sans-serif;
+        }
+        
+        .status.disconnected {
+            background: #F5EADA;
+            color: #231F20;
+            border: 2px solid #EFA63C;
+        }
+        
+        .status.connecting {
+            background: #D8F2D5;
+            color: #1F4E23;
+            border: 2px solid #38A29D;
+        }
+        
+        .status.connected {
+            background: #D8F2D5;
+            color: #1F4E23;
+            border: 2px solid #1F4E23;
+        }
+        
+        .controls {
+            margin: 48px 0;
+        }
+        
+        .play-button {
+            background: #1F4E23;
+            color: #FFFFFF;
+            border: none;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .play-button:hover {
+            background: #38A29D;
+            transform: scale(1.05);
+        }
+        
+        .play-button:active {
+            transform: scale(0.95);
+        }
+        
+        .play-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .volume-control {
+            margin: 48px 0;
+        }
+        
+        .volume-control label {
+            display: block;
+            margin-bottom: 16px;
+            color: #231F20;
+            font-weight: 500;
+            font-family: "Montserrat", sans-serif;
+            font-size: 1rem;
+        }
+        
+        .volume-slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #D8F2D5;
+            outline: none;
+            -webkit-appearance: none;
+            border: 1px solid #CCC;
+        }
+        
+        .volume-slider:focus {
+            border-color: #38A29D;
+            box-shadow: 0 0 0 3px rgba(56,162,157,0.3);
+        }
+        
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #38A29D;
+            cursor: pointer;
+        }
+        
+        .volume-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #38A29D;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .stream-info {
+            margin-top: 48px;
+            padding: 32px;
+            background: #FFFFFF;
+            border-radius: 4px;
+            color: #231F20;
+            font-size: 16px;
+            line-height: 1.6;
+            border: 1px solid #D8F2D5;
+        }
+        
+        .stream-info strong {
+            color: #1F4E23;
+            font-family: "Montserrat", sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .error-message {
+            background: #F5EADA;
+            color: #231F20;
+            padding: 16px;
+            border-radius: 4px;
+            margin: 32px 0;
+            display: none;
+            border: 2px solid #EFA63C;
+            font-family: "Open Sans", sans-serif;
+        }
+        
+        .recently-played {
+            margin-top: 48px;
+            padding: 32px;
+            background: #F5EADA;
+            border-radius: 4px;
+        }
+        
+        .recently-played h3 {
+            margin: 0 0 24px 0;
+            color: #1F4E23;
+            font-size: 1.5rem;
+            font-weight: 600;
+            font-family: "Montserrat", sans-serif;
+        }
+        
+        .recent-tracks {
+            color: #231F20;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        
+        .recent-track {
+            padding: 16px 0;
+            border-bottom: 1px solid #D8F2D5;
+        }
+        
+        .recent-track:last-child {
+            border-bottom: none;
+        }
+        
+        .recent-track strong {
+            color: #1F4E23;
+            font-family: "Montserrat", sans-serif;
+            font-weight: 600;
+        }
+        
+        .voting-section {
+            margin-top: 32px;
+            padding: 24px;
+            background: #D8F2D5;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 32px;
+        }
+        
+        .vote-button {
+            background: transparent;
+            border: 2px solid #1F4E23;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #231F20;
+        }
+        
+        .vote-button:hover {
+            background: #D8F2D5;
+            transform: scale(1.1);
+        }
+        
+        .vote-button.liked {
+            border-color: #1F4E23;
+            background: #1F4E23;
+            color: #FFFFFF;
+        }
+        
+        .vote-button.disliked {
+            border-color: #EFA63C;
+            background: #EFA63C;
+            color: #FFFFFF;
+        }
+        
+        .vote-count {
+            font-size: 16px;
+            font-weight: 600;
+            color: #231F20;
+            min-width: 30px;
+            text-align: center;
+            font-family: "Montserrat", sans-serif;
+        }
+        
+        .now-playing {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .album-art {
+            width: 200px;
+            height: 200px;
+            border-radius: 8px;
+            object-fit: cover;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            flex-shrink: 0;
+        }
+        
+        .track-details {
+            flex: 1;
+            font-size: 16px;
+            color: #231F20;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo-container">
+            <img src="RadioCalicoLogoTM.png" alt="Radio Calico Logo" class="logo">
+            <h1>Radio Calico</h1>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <div class="radio-player">
+        
+        <div id="status" class="status disconnected">
+            Disconnected
+        </div>
+        
+        <div class="controls">
+            <button id="playButton" class="play-button">
+                ▶️
+            </button>
+        </div>
+        
+        <div class="volume-control">
+            <label for="volume">Volume</label>
+            <input type="range" id="volume" class="volume-slider" min="0" max="100" value="50">
+        </div>
+        
+        <div id="errorMessage" class="error-message"></div>
+        
+        <div class="stream-info">
+            <strong>Live HLS Stream</strong><br>
+            High Quality Audio • Lossless Format<br>
+            <div class="now-playing">
+                <img id="albumArt" class="album-art" src="https://d3d4yli4hf5bmh.cloudfront.net/cover.jpg" alt="Album Art">
+                <div class="track-details">
+                    <div id="currentTrack">Loading track info...</div>
+                    <div id="elapsedTime" style="margin-top: 10px; font-weight: 500;">Elapsed: 00:00</div>
+                    <div class="voting-section">
+                        <button id="likeButton" class="vote-button" title="Like this song">👍</button>
+                        <div class="vote-count" id="likeCount">0</div>
+                        <button id="dislikeButton" class="vote-button" title="Dislike this song">👎</button>
+                        <div class="vote-count" id="dislikeCount">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="recently-played">
+            <h3>Recently Played</h3>
+            <div id="recentTracks" class="recent-tracks">
+                Loading recent tracks...
+            </div>
+        </div>
+        
+        <audio id="audioPlayer" preload="none"></audio>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script>
+        class RadioPlayer {
+            constructor() {
+                this.audio = document.getElementById('audioPlayer');
+                this.playButton = document.getElementById('playButton');
+                this.volumeSlider = document.getElementById('volume');
+                this.statusDiv = document.getElementById('status');
+                this.errorDiv = document.getElementById('errorMessage');
+                this.elapsedTimeDiv = document.getElementById('elapsedTime');
+                this.currentTrackDiv = document.getElementById('currentTrack');
+                this.recentTracksDiv = document.getElementById('recentTracks');
+                this.albumArtImg = document.getElementById('albumArt');
+                this.likeButton = document.getElementById('likeButton');
+                this.dislikeButton = document.getElementById('dislikeButton');
+                this.likeCountDiv = document.getElementById('likeCount');
+                this.dislikeCountDiv = document.getElementById('dislikeCount');
+                this.streamUrl = 'https://d3d4yli4hf5bmh.cloudfront.net/hls/live.m3u8';
+                this.metadataUrl = 'https://d3d4yli4hf5bmh.cloudfront.net/metadatav2.json';
+                this.hls = null;
+                this.isPlaying = false;
+                this.startTime = null;
+                this.elapsedInterval = null;
+                this.metadataInterval = null;
+                this.currentSong = null;
+                this.userId = this.generateUserId();
+                
+                this.initializePlayer();
+                this.attachEventListeners();
+                this.fetchMetadata();
+            }
+            
+            initializePlayer() {
+                // Check if HLS is supported
+                if (Hls.isSupported()) {
+                    this.hls = new Hls({
+                        enableWorker: true,
+                        lowLatencyMode: true,
+                        backBufferLength: 90
+                    });
+                    
+                    this.hls.loadSource(this.streamUrl);
+                    this.hls.attachMedia(this.audio);
+                    
+                    this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                        console.log('HLS manifest parsed');
+                        this.updateStatus('connected', 'Ready to play');
+                    });
+                    
+                    this.hls.on(Hls.Events.ERROR, (event, data) => {
+                        console.error('HLS Error:', data);
+                        this.handleError('Stream error occurred');
+                    });
+                    
+                } else if (this.audio.canPlayType('application/vnd.apple.mpegurl')) {
+                    // Safari native HLS support
+                    this.audio.src = this.streamUrl;
+                    this.updateStatus('connected', 'Ready to play');
+                } else {
+                    this.handleError('HLS is not supported in this browser');
+                }
+            }
+            
+            attachEventListeners() {
+                this.playButton.addEventListener('click', () => this.togglePlayback());
+                
+                this.volumeSlider.addEventListener('input', (e) => {
+                    this.audio.volume = e.target.value / 100;
+                });
+                
+                this.likeButton.addEventListener('click', () => this.vote(1));
+                this.dislikeButton.addEventListener('click', () => this.vote(-1));
+                
+                this.audio.addEventListener('loadstart', () => {
+                    this.updateStatus('connecting', 'Connecting...');
+                });
+                
+                this.audio.addEventListener('canplay', () => {
+                    this.updateStatus('connected', 'Ready to play');
+                });
+                
+                this.audio.addEventListener('playing', () => {
+                    this.updateStatus('connected', 'Playing live stream');
+                    this.isPlaying = true;
+                    this.playButton.textContent = '⏸️';
+                    this.startElapsedTimer();
+                    this.startMetadataPolling();
+                });
+                
+                this.audio.addEventListener('pause', () => {
+                    this.updateStatus('connected', 'Paused');
+                    this.isPlaying = false;
+                    this.playButton.textContent = '▶️';
+                    this.stopElapsedTimer();
+                    this.stopMetadataPolling();
+                });
+                
+                this.audio.addEventListener('waiting', () => {
+                    this.updateStatus('connecting', 'Buffering...');
+                });
+                
+                this.audio.addEventListener('error', (e) => {
+                    console.error('Audio error:', e);
+                    this.handleError('Failed to load audio stream');
+                });
+                
+                this.audio.addEventListener('stalled', () => {
+                    this.updateStatus('connecting', 'Stream stalled, reconnecting...');
+                });
+            }
+            
+            togglePlayback() {
+                if (this.isPlaying) {
+                    this.audio.pause();
+                } else {
+                    const playPromise = this.audio.play();
+                    
+                    if (playPromise !== undefined) {
+                        playPromise.catch(error => {
+                            console.error('Playback failed:', error);
+                            this.handleError('Playback failed. Click to try again.');
+                        });
+                    }
+                }
+            }
+            
+            updateStatus(type, message) {
+                this.statusDiv.className = `status ${type}`;
+                this.statusDiv.textContent = message;
+                this.hideError();
+            }
+            
+            handleError(message) {
+                this.updateStatus('disconnected', 'Connection failed');
+                this.showError(message);
+                this.isPlaying = false;
+                this.playButton.textContent = '▶️';
+                this.stopElapsedTimer();
+                this.stopMetadataPolling();
+            }
+            
+            showError(message) {
+                this.errorDiv.textContent = message;
+                this.errorDiv.style.display = 'block';
+            }
+            
+            hideError() {
+                this.errorDiv.style.display = 'none';
+            }
+            
+            startElapsedTimer() {
+                this.startTime = Date.now();
+                this.elapsedInterval = setInterval(() => {
+                    this.updateElapsedTime();
+                }, 1000);
+            }
+            
+            stopElapsedTimer() {
+                if (this.elapsedInterval) {
+                    clearInterval(this.elapsedInterval);
+                    this.elapsedInterval = null;
+                }
+                this.elapsedTimeDiv.textContent = 'Elapsed: 00:00';
+            }
+            
+            updateElapsedTime() {
+                if (this.startTime) {
+                    const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
+                    const minutes = Math.floor(elapsed / 60);
+                    const seconds = elapsed % 60;
+                    const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    this.elapsedTimeDiv.textContent = `Elapsed: ${timeString}`;
+                }
+            }
+            
+            async fetchMetadata() {
+                try {
+                    const response = await fetch(this.metadataUrl);
+                    const metadata = await response.json();
+                    this.updateTrackInfo(metadata);
+                    this.updateRecentTracks(metadata);
+                    this.updateAlbumArt();
+                } catch (error) {
+                    console.error('Failed to fetch metadata:', error);
+                    this.currentTrackDiv.textContent = 'Track info unavailable';
+                    this.recentTracksDiv.textContent = 'Recent tracks unavailable';
+                    this.resetVotingUI();
+                }
+            }
+            
+            updateTrackInfo(metadata) {
+                if (metadata && metadata.artist && metadata.title) {
+                    let trackHtml = `<strong>${metadata.artist}</strong><br>${metadata.title}`;
+                    
+                    if (metadata.album) {
+                        trackHtml += `<br><em>${metadata.album}</em>`;
+                        
+                        if (metadata.date) {
+                            trackHtml += ` (${metadata.date})`;
+                        }
+                    }
+                    
+                    if (metadata.bit_depth && metadata.sample_rate) {
+                        trackHtml += `<br><small>${metadata.bit_depth}-bit • ${metadata.sample_rate.toLocaleString()} Hz</small>`;
+                    }
+                    
+                    this.currentTrackDiv.innerHTML = trackHtml;
+                    
+                    // Update voting info if track changed
+                    const newSong = {
+                        artist: metadata.artist,
+                        title: metadata.title,
+                        album: metadata.album
+                    };
+                    
+                    const isNewTrack = !this.currentSong || 
+                        this.currentSong.artist !== newSong.artist || 
+                        this.currentSong.title !== newSong.title;
+                    
+                    if (isNewTrack) {
+                        console.log('New track detected, updating voting info:', newSong);
+                        this.currentSong = newSong;
+                        this.updateVotingInfo();
+                    }
+                } else {
+                    this.currentTrackDiv.textContent = 'Track info unavailable';
+                    this.currentSong = null;
+                    this.resetVotingUI();
+                }
+            }
+            
+            updateRecentTracks(metadata) {
+                if (!metadata) return;
+                
+                let recentHtml = '';
+                for (let i = 1; i <= 5; i++) {
+                    const artist = metadata[`prev_artist_${i}`];
+                    const title = metadata[`prev_title_${i}`];
+                    
+                    if (artist && title) {
+                        recentHtml += `
+                            <div class="recent-track">
+                                <strong>${artist}</strong><br>
+                                ${title}
+                            </div>
+                        `;
+                    }
+                }
+                
+                if (recentHtml) {
+                    this.recentTracksDiv.innerHTML = recentHtml;
+                } else {
+                    this.recentTracksDiv.textContent = 'No recent tracks available';
+                }
+            }
+            
+            updateAlbumArt() {
+                // Force refresh album art by adding timestamp to prevent caching
+                const timestamp = Date.now();
+                this.albumArtImg.src = `https://d3d4yli4hf5bmh.cloudfront.net/cover.jpg?t=${timestamp}`;
+            }
+            
+            startMetadataPolling() {
+                this.metadataInterval = setInterval(() => {
+                    this.fetchMetadata();
+                }, 30000);
+            }
+            
+            stopMetadataPolling() {
+                if (this.metadataInterval) {
+                    clearInterval(this.metadataInterval);
+                    this.metadataInterval = null;
+                }
+            }
+            
+            generateUserId() {
+                let userId = localStorage.getItem('radioUserId');
+                if (!userId) {
+                    userId = 'user_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+                    localStorage.setItem('radioUserId', userId);
+                }
+                return userId;
+            }
+            
+            async updateVotingInfo() {
+                if (!this.currentSong) {
+                    console.log('No current song, skipping vote info update');
+                    return;
+                }
+                
+                console.log('Updating voting info for:', this.currentSong);
+                
+                try {
+                    const response = await fetch('/api/songs/vote-info', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(this.currentSong)
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log('Vote info received:', data);
+                        this.currentSong.songId = data.songId;
+                        this.likeCountDiv.textContent = data.likes;
+                        this.dislikeCountDiv.textContent = data.dislikes;
+                        
+                        // Get user's current vote
+                        this.getUserVote();
+                    } else {
+                        console.error('Failed to fetch vote info, status:', response.status);
+                    }
+                } catch (error) {
+                    console.error('Failed to update voting info:', error);
+                }
+            }
+            
+            async getUserVote() {
+                if (!this.currentSong || !this.currentSong.songId) {
+                    console.log('No song ID available for getting user vote');
+                    return;
+                }
+                
+                console.log('Getting user vote for song ID:', this.currentSong.songId, 'user:', this.userId);
+                
+                try {
+                    const response = await fetch(`/api/songs/${this.currentSong.songId}/vote/${this.userId}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log('User vote received:', data);
+                        this.updateVoteButtons(data.userVote);
+                    } else {
+                        console.error('Failed to get user vote, status:', response.status);
+                    }
+                } catch (error) {
+                    console.error('Failed to get user vote:', error);
+                }
+            }
+            
+            async vote(voteType) {
+                if (!this.currentSong || !this.currentSong.songId) return;
+                
+                try {
+                    const response = await fetch(`/api/songs/${this.currentSong.songId}/vote`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            userId: this.userId,
+                            voteType: voteType
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.likeCountDiv.textContent = data.likes;
+                        this.dislikeCountDiv.textContent = data.dislikes;
+                        this.updateVoteButtons(data.userVote);
+                    }
+                } catch (error) {
+                    console.error('Failed to vote:', error);
+                }
+            }
+            
+            updateVoteButtons(userVote) {
+                this.likeButton.classList.remove('liked');
+                this.dislikeButton.classList.remove('disliked');
+                
+                if (userVote === 1) {
+                    this.likeButton.classList.add('liked');
+                } else if (userVote === -1) {
+                    this.dislikeButton.classList.add('disliked');
+                }
+            }
+            
+            resetVotingUI() {
+                this.likeCountDiv.textContent = '0';
+                this.dislikeCountDiv.textContent = '0';
+                this.likeButton.classList.remove('liked');
+                this.dislikeButton.classList.remove('disliked');
+            }
+        }
+        
+        // Initialize the radio player when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new RadioPlayer();
+        });
+    </script>
+</body>
+</html>

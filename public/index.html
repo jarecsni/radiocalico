@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radio Calico - User Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Open+Sans:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: "Open Sans", "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0;
+            background: #FFFFFF;
+            color: #231F20;
+            line-height: 1.6;
+        }
+        
+        .header {
+            width: 100%;
+            background: #38A29D;
+            padding: 16px 0;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 64px;
+        }
+        
+        .header .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        
+        .header .logo {
+            width: 60px;
+            height: 60px;
+        }
+        
+        .header h1 {
+            font-family: "Montserrat", sans-serif;
+            font-weight: 700;
+            font-size: 2rem;
+            color: #FFFFFF;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .main-content {
+            padding: 0 24px 64px;
+        }
+        .form-container {
+            background: #F5EADA;
+            padding: 32px;
+            border-radius: 4px;
+            margin-bottom: 48px;
+            border: 1px solid #D8F2D5;
+        }
+        .form-group {
+            margin-bottom: 24px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-family: "Montserrat", sans-serif;
+            color: #1F4E23;
+        }
+        input[type="text"], input[type="email"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #CCC;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-family: "Open Sans", sans-serif;
+            font-size: 16px;
+        }
+        
+        input[type="text"]:focus, input[type="email"]:focus {
+            border-color: #38A29D;
+            box-shadow: 0 0 0 3px rgba(56,162,157,0.3);
+            outline: none;
+        }
+        button {
+            background: #1F4E23;
+            color: #FFFFFF;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-family: "Montserrat", sans-serif;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+        
+        button:hover {
+            background: #38A29D;
+        }
+        .users-list {
+            border: 1px solid #D8F2D5;
+            border-radius: 4px;
+            background: #F5EADA;
+        }
+        .user-item {
+            padding: 24px;
+            border-bottom: 1px solid #D8F2D5;
+        }
+        
+        .user-item:last-child {
+            border-bottom: none;
+        }
+        .user-name {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-family: "Montserrat", sans-serif;
+            color: #1F4E23;
+            font-size: 1.125rem;
+        }
+        
+        .user-email {
+            color: #231F20;
+            font-size: 0.875rem;
+        }
+        .message {
+            padding: 16px;
+            margin: 16px 0;
+            border-radius: 4px;
+            font-family: "Open Sans", sans-serif;
+        }
+        
+        .success {
+            background: #D8F2D5;
+            color: #1F4E23;
+            border: 2px solid #1F4E23;
+        }
+        
+        .error {
+            background: #F5EADA;
+            color: #231F20;
+            border: 2px solid #EFA63C;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo-container">
+            <img src="RadioCalicoLogoTM.png" alt="Radio Calico Logo" class="logo">
+            <h1>Radio Calico</h1>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <h2 style="font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 2.25rem; color: #1F4E23; margin-bottom: 48px; text-align: center;">User Management</h2>
+    
+    <div class="form-container">
+        <h3 style="font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 1.5rem; color: #1F4E23; margin: 0 0 24px 0;">Add New User</h3>
+        <form id="userForm">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <button type="submit">Save</button>
+        </form>
+        <div id="message"></div>
+    </div>
+
+    <div>
+        <h3 style="font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 1.5rem; color: #1F4E23; margin: 0 0 24px 0;">Existing Users (Last 10)</h3>
+        <div id="usersList" class="users-list">
+            <!-- Users will be loaded here -->
+        </div>
+    </div>
+
+    <script>
+        // Load users on page load
+        document.addEventListener('DOMContentLoaded', loadUsers);
+
+        // Handle form submission
+        document.getElementById('userForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const messageDiv = document.getElementById('message');
+
+            try {
+                const response = await fetch('/api/users', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, email })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    messageDiv.innerHTML = '<div class="message success">User added successfully!</div>';
+                    document.getElementById('userForm').reset();
+                    loadUsers(); // Refresh the list
+                } else {
+                    messageDiv.innerHTML = `<div class="message error">Error: ${data.error}</div>`;
+                }
+            } catch (error) {
+                messageDiv.innerHTML = '<div class="message error">Network error occurred</div>';
+            }
+        });
+
+        // Load users function
+        async function loadUsers() {
+            try {
+                const response = await fetch('/api/users');
+                const users = await response.json();
+                
+                const usersList = document.getElementById('usersList');
+                
+                if (users.length === 0) {
+                    usersList.innerHTML = '<div class="user-item">No users found</div>';
+                    return;
+                }
+
+                usersList.innerHTML = users.map(user => `
+                    <div class="user-item">
+                        <div class="user-name">${escapeHtml(user.name)}</div>
+                        <div class="user-email">${escapeHtml(user.email)}</div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                document.getElementById('usersList').innerHTML = '<div class="user-item">Error loading users</div>';
+            }
+        }
+
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+    </div>
+</body>
+</html>

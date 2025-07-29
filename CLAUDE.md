@@ -19,11 +19,13 @@ Radio Calico is a web-based live radio streaming application with user voting fu
 - **API endpoints** for user registration and voting functionality
 - **Database auto-initialization** on server startup
 
-### Frontend (public/radio.html)
-- **Pure HTML/CSS/JavaScript** (no framework dependencies)
-- **HLS.js** library for HTTP Live Streaming playback
-- **Real-time metadata polling** every 30 seconds when playing
-- **Responsive design** with mobile-first approach
+### Frontend (Refactored Structure)
+- **Separation of concerns**: HTML structure, CSS styling, and JavaScript functionality in separate files
+- **radio.html**: Clean HTML structure with external CSS/JS references
+- **radio-styles.css**: Complete styling system with responsive design and brand colors
+- **radio-player.js**: RadioPlayer class with HLS streaming, metadata handling, and user interactions
+- **Lucide Icons**: Modern geometric icon system for UI controls
+- **HLS.js**: HTTP Live Streaming library for audio playback
 
 ### External Services
 - **CloudFront CDN**: `https://d3d4yli4hf5bmh.cloudfront.net/`
@@ -80,8 +82,11 @@ Radio Calico is a web-based live radio streaming application with user voting fu
 
 - `server.js` - Main Express application
 - `users.db` - SQLite database (auto-created)
-- `public/radio.html` - Main radio player interface (served as `/`)
-- `public/index.html` - User management interface
+- `public/radio.html` - Main radio player interface
+- `public/radio-styles.css` - Radio player styling (314 lines)
+- `public/radio-player.js` - Radio player functionality (378 lines)
+- `public/index.html` - User management interface (served as `/`)
+- `public/user-management.css` - User management styling (162 lines)
 - `public/RadioCalicoLogoTM.png` - Logo asset
 - `RadioCalico_Style_Guide.txt` - Complete brand guidelines
 - `RadioCalicoLayout.png` - Visual layout reference for UI design
@@ -89,11 +94,31 @@ Radio Calico is a web-based live radio streaming application with user voting fu
 
 ## Development Notes
 
+### Code Organization (Post-Refactoring)
+- **Separated concerns**: HTML, CSS, and JavaScript in dedicated files
+- **radio-styles.css**: 314 lines of organized styling with proper component separation
+- **radio-player.js**: 378 lines containing complete RadioPlayer class implementation
+- **user-management.css**: 162 lines for admin interface styling
+- **No inline styles or scripts** - all externalized for maintainability
+
 ### Frontend JavaScript Architecture
-- **RadioPlayer class** handles all streaming and UI logic
-- **Event-driven** audio state management
+- **RadioPlayer class** in dedicated `radio-player.js` file
+- **Event-driven** audio state management with proper error handling
 - **Polling-based** metadata updates (30s intervals when playing)
 - **LocalStorage** for persistent user identification
+- **Lucide icon integration** for consistent geometric UI controls
+
+### CSS Architecture
+- **Component-based styling** with logical separation
+- **Brand color system** properly implemented across components
+- **Responsive breakpoints** at 768px for mobile/desktop
+- **Audio controls** with custom slider styling and hover effects
+- **Typography hierarchy** using Montserrat and Open Sans fonts
+
+### External Library Integration
+- **HLS.js**: HTTP Live Streaming with Safari fallback support
+- **Lucide Icons**: Modern icon system with `createIcons()` initialization
+- **Google Fonts**: Montserrat and Open Sans with proper font loading
 
 ### Database Schema
 ```sql
@@ -102,12 +127,8 @@ songs (id, artist, title, album)
 votes (id, song_id, user_id, vote_type, created_at)
 ```
 
-### CSS Organization
-- **Responsive breakpoints** at 768px for mobile/desktop
-- **CSS custom properties** could be added for color management
-- **Component-based** styling (header, player, controls, etc.)
-
 ### Stream Integration
 - **HLS.js** configuration optimized for low-latency live streaming
 - **Error handling** for stream failures and reconnection
 - **Metadata synchronization** between stream and display
+- **Icon state management** for play/pause button transitions

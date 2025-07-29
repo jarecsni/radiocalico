@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Radio Calico - Live Stream</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Open+Sans:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <style>
         body {
             font-family: "Open Sans", "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -19,8 +20,8 @@
         
         .header {
             width: 100%;
-            background: #38A29D;
-            padding: 16px 0;
+            background: #231F20;
+            padding: 24px 0;
             text-align: center;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
@@ -40,153 +41,180 @@
         .header h1 {
             font-family: "Montserrat", sans-serif;
             font-weight: 700;
-            font-size: 2rem;
-            color: #FFFFFF;
+            font-size: 2.5rem;
+            color: #D8F2D5;
             margin: 0;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.1em;
         }
         
         .main-content {
             max-width: 1200px;
             width: 100%;
-            padding: 64px 24px;
+            padding: 48px 24px 0;
+            display: flex;
+            gap: 48px;
+            align-items: flex-start;
         }
         
-        .radio-player {
-            background: #F5EADA;
-            padding: 48px;
-            border-radius: 4px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        .album-section {
+            flex: 0 0 400px;
+            position: relative;
+        }
+        
+        .track-info-section {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .album-art-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+        
+        .album-art {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        
+        .artist-banner {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #EFA63C;
+            color: #FFFFFF;
+            padding: 24px;
             text-align: center;
-            max-width: 600px;
-            margin: 0 auto;
+        }
+        
+        .artist-banner h2 {
+            font-family: "Montserrat", sans-serif;
+            font-weight: 700;
+            font-size: 3rem;
+            margin: 0;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
         }
         
         
-        .status {
-            margin: 32px 0;
-            padding: 16px;
-            border-radius: 4px;
-            font-weight: 500;
-            font-family: "Open Sans", sans-serif;
-        }
-        
-        .status.disconnected {
-            background: #F5EADA;
+        .track-title {
+            font-family: "Montserrat", sans-serif;
+            font-weight: 700;
+            font-size: 3rem;
             color: #231F20;
-            border: 2px solid #EFA63C;
+            margin: 0 0 16px 0;
+            line-height: 1.2;
         }
         
-        .status.connecting {
-            background: #D8F2D5;
-            color: #1F4E23;
-            border: 2px solid #38A29D;
+        .song-details {
+            margin-bottom: 32px;
         }
         
-        .status.connected {
-            background: #D8F2D5;
-            color: #1F4E23;
-            border: 2px solid #1F4E23;
+        .song-title {
+            font-family: "Montserrat", sans-serif;
+            font-weight: 600;
+            font-size: 2rem;
+            color: #231F20;
+            margin: 0 0 8px 0;
         }
         
-        .controls {
-            margin: 48px 0;
+        .album-info {
+            font-family: "Open Sans", sans-serif;
+            font-size: 1.25rem;
+            color: #231F20;
+            margin: 0 0 24px 0;
+        }
+        
+        .quality-info {
+            font-family: "Open Sans", sans-serif;
+            font-size: 1rem;
+            color: #666;
+            margin: 0 0 32px 0;
+            font-style: italic;
+        }
+        
+        .audio-controls {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 8px;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 32px 0;
+            max-width: 300px;
         }
         
         .play-button {
-            background: #1F4E23;
-            color: #FFFFFF;
+            background: none;
             border: none;
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            font-size: 24px;
+            color: #FFFFFF;
             cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .play-icon {
+            width: 20px;
+            height: 20px;
         }
         
         .play-button:hover {
-            background: #38A29D;
-            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.1);
         }
         
-        .play-button:active {
-            transform: scale(0.95);
-        }
-        
-        .play-button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .volume-control {
-            margin: 48px 0;
-        }
-        
-        .volume-control label {
-            display: block;
-            margin-bottom: 16px;
-            color: #231F20;
-            font-weight: 500;
-            font-family: "Montserrat", sans-serif;
+        .time-display {
+            color: #FFFFFF;
+            font-family: "Open Sans", sans-serif;
             font-size: 1rem;
+            margin-right: 8px;
+        }
+        
+        .volume-icon {
+            color: #FFFFFF;
+            width: 20px;
+            height: 20px;
+            margin-left: auto;
         }
         
         .volume-slider {
-            width: 100%;
-            height: 6px;
-            border-radius: 3px;
-            background: #D8F2D5;
-            outline: none;
-            -webkit-appearance: none;
-            border: 1px solid #CCC;
+            width: 100px;
+            margin-left: 8px;
         }
         
-        .volume-slider:focus {
-            border-color: #38A29D;
-            box-shadow: 0 0 0 3px rgba(56,162,157,0.3);
+        .volume-slider {
+            height: 4px;
+            border-radius: 2px;
+            background: #555;
+            outline: none;
+            -webkit-appearance: none;
         }
         
         .volume-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 20px;
-            height: 20px;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
-            background: #38A29D;
+            background: #FFFFFF;
             cursor: pointer;
         }
         
         .volume-slider::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
-            background: #38A29D;
+            background: #FFFFFF;
             cursor: pointer;
             border: none;
         }
         
-        .stream-info {
-            margin-top: 48px;
-            padding: 32px;
-            background: #FFFFFF;
-            border-radius: 4px;
-            color: #231F20;
-            font-size: 16px;
-            line-height: 1.6;
-            border: 1px solid #D8F2D5;
-        }
-        
-        .stream-info strong {
-            color: #1F4E23;
-            font-family: "Montserrat", sans-serif;
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
         
         .error-message {
             background: #F5EADA;
@@ -199,34 +227,36 @@
             font-family: "Open Sans", sans-serif;
         }
         
-        .recently-played {
-            margin-top: 48px;
-            padding: 32px;
-            background: #F5EADA;
-            border-radius: 4px;
+        
+        .previous-tracks-section {
+            width: 100%;
+            background: #D8F2D5;
+            margin-top: 64px;
+            padding: 48px 0;
         }
         
-        .recently-played h3 {
-            margin: 0 0 24px 0;
+        .previous-tracks-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        
+        .previous-tracks-section h3 {
+            margin: 0 0 32px 0;
             color: #1F4E23;
-            font-size: 1.5rem;
+            font-size: 2rem;
             font-weight: 600;
             font-family: "Montserrat", sans-serif;
         }
         
         .recent-tracks {
-            color: #231F20;
+            color: #1F4E23;
             font-size: 16px;
-            line-height: 1.6;
+            line-height: 1.8;
         }
         
         .recent-track {
-            padding: 16px 0;
-            border-bottom: 1px solid #D8F2D5;
-        }
-        
-        .recent-track:last-child {
-            border-bottom: none;
+            padding: 8px 0;
         }
         
         .recent-track strong {
@@ -236,79 +266,61 @@
         }
         
         .voting-section {
-            margin-top: 32px;
-            padding: 24px;
-            background: #D8F2D5;
-            border-radius: 4px;
+            margin: 32px 0;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 32px;
+            gap: 16px;
+        }
+        
+        .rate-label {
+            font-family: "Open Sans", sans-serif;
+            color: #666;
+            margin-right: 8px;
         }
         
         .vote-button {
-            background: transparent;
-            border: 2px solid #1F4E23;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            font-size: 20px;
+            background: none;
+            border: none;
+            font-size: 32px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #231F20;
+            transition: transform 0.2s ease;
+            padding: 8px;
         }
         
         .vote-button:hover {
-            background: #D8F2D5;
             transform: scale(1.1);
         }
         
         .vote-button.liked {
-            border-color: #1F4E23;
-            background: #1F4E23;
-            color: #FFFFFF;
+            filter: brightness(1.2);
         }
         
         .vote-button.disliked {
-            border-color: #EFA63C;
-            background: #EFA63C;
-            color: #FFFFFF;
+            filter: brightness(1.2);
         }
         
-        .vote-count {
-            font-size: 16px;
-            font-weight: 600;
-            color: #231F20;
-            min-width: 30px;
-            text-align: center;
-            font-family: "Montserrat", sans-serif;
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+                gap: 32px;
+            }
+            
+            .album-section {
+                flex: none;
+                max-width: 400px;
+                margin: 0 auto;
+            }
+            
+            .track-title {
+                font-size: 2rem;
+            }
+            
+            .song-title {
+                font-size: 1.5rem;
+            }
         }
         
-        .now-playing {
-            display: flex;
-            align-items: flex-start;
-            gap: 15px;
-            margin-top: 15px;
-        }
-        
-        .album-art {
-            width: 200px;
-            height: 200px;
-            border-radius: 8px;
-            object-fit: cover;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            flex-shrink: 0;
-        }
-        
-        .track-details {
-            flex: 1;
-            font-size: 16px;
-            color: #231F20;
-            line-height: 1.6;
-        }
     </style>
 </head>
 <body>
@@ -320,53 +332,57 @@
     </div>
     
     <div class="main-content">
-        <div class="radio-player">
-        
-        <div id="status" class="status disconnected">
-            Disconnected
-        </div>
-        
-        <div class="controls">
-            <button id="playButton" class="play-button">
-                ▶️
-            </button>
-        </div>
-        
-        <div class="volume-control">
-            <label for="volume">Volume</label>
-            <input type="range" id="volume" class="volume-slider" min="0" max="100" value="50">
-        </div>
-        
-        <div id="errorMessage" class="error-message"></div>
-        
-        <div class="stream-info">
-            <strong>Live HLS Stream</strong><br>
-            High Quality Audio • Lossless Format<br>
-            <div class="now-playing">
+        <div class="album-section">
+            <div class="album-art-container">
                 <img id="albumArt" class="album-art" src="https://d3d4yli4hf5bmh.cloudfront.net/cover.jpg" alt="Album Art">
-                <div class="track-details">
-                    <div id="currentTrack">Loading track info...</div>
-                    <div id="elapsedTime" style="margin-top: 10px; font-weight: 500;">Elapsed: 00:00</div>
-                    <div class="voting-section">
-                        <button id="likeButton" class="vote-button" title="Like this song">👍</button>
-                        <div class="vote-count" id="likeCount">0</div>
-                        <button id="dislikeButton" class="vote-button" title="Dislike this song">👎</button>
-                        <div class="vote-count" id="dislikeCount">0</div>
-                    </div>
+                <div class="artist-banner">
+                    <h2 id="artistName">SHANDI</h2>
                 </div>
             </div>
         </div>
         
-        <div class="recently-played">
-            <h3>Recently Played</h3>
+        <div class="track-info-section">
+            <h1 class="track-title" id="trackTitle">Shandi Sinnamon</h1>
+            
+            <div class="song-details">
+                <h2 class="song-title" id="songTitle">He's A Dream (1983)</h2>
+                <div class="album-info" id="albumInfo">Flashdance (Original Motion Picture Soundtrack)</div>
+                <div class="quality-info" id="qualityInfo">
+                    Source quality: 16-bit 44.1kHz<br>
+                    Stream quality: 48kHz FLAC / HLS Lossless
+                </div>
+            </div>
+            
+            <div class="voting-section">
+                <span class="rate-label">Rate this track:</span>
+                <button id="likeButton" class="vote-button" title="Like this song">👍</button>
+                <button id="dislikeButton" class="vote-button" title="Dislike this song">👎</button>
+            </div>
+            
+            <div class="audio-controls">
+                <button id="playButton" class="play-button">
+                    <i data-lucide="play" class="play-icon"></i>
+                </button>
+                <span class="time-display" id="timeDisplay">0:35 / Live</span>
+                <i data-lucide="volume-2" class="volume-icon"></i>
+                <input type="range" id="volume" class="volume-slider" min="0" max="100" value="50">
+            </div>
+            
+            
+            <div id="errorMessage" class="error-message"></div>
+        </div>
+    </div>
+    
+    <div class="previous-tracks-section">
+        <div class="previous-tracks-container">
+            <h3>Previous tracks:</h3>
             <div id="recentTracks" class="recent-tracks">
                 Loading recent tracks...
             </div>
         </div>
-        
-        <audio id="audioPlayer" preload="none"></audio>
-        </div>
     </div>
+    
+    <audio id="audioPlayer" preload="none"></audio>
 
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script>
@@ -375,16 +391,12 @@
                 this.audio = document.getElementById('audioPlayer');
                 this.playButton = document.getElementById('playButton');
                 this.volumeSlider = document.getElementById('volume');
-                this.statusDiv = document.getElementById('status');
                 this.errorDiv = document.getElementById('errorMessage');
-                this.elapsedTimeDiv = document.getElementById('elapsedTime');
-                this.currentTrackDiv = document.getElementById('currentTrack');
+                this.timeDisplay = document.getElementById('timeDisplay');
                 this.recentTracksDiv = document.getElementById('recentTracks');
                 this.albumArtImg = document.getElementById('albumArt');
                 this.likeButton = document.getElementById('likeButton');
                 this.dislikeButton = document.getElementById('dislikeButton');
-                this.likeCountDiv = document.getElementById('likeCount');
-                this.dislikeCountDiv = document.getElementById('dislikeCount');
                 this.streamUrl = 'https://d3d4yli4hf5bmh.cloudfront.net/hls/live.m3u8';
                 this.metadataUrl = 'https://d3d4yli4hf5bmh.cloudfront.net/metadatav2.json';
                 this.hls = null;
@@ -414,7 +426,6 @@
                     
                     this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
                         console.log('HLS manifest parsed');
-                        this.updateStatus('connected', 'Ready to play');
                     });
                     
                     this.hls.on(Hls.Events.ERROR, (event, data) => {
@@ -425,7 +436,6 @@
                 } else if (this.audio.canPlayType('application/vnd.apple.mpegurl')) {
                     // Safari native HLS support
                     this.audio.src = this.streamUrl;
-                    this.updateStatus('connected', 'Ready to play');
                 } else {
                     this.handleError('HLS is not supported in this browser');
                 }
@@ -441,42 +451,30 @@
                 this.likeButton.addEventListener('click', () => this.vote(1));
                 this.dislikeButton.addEventListener('click', () => this.vote(-1));
                 
-                this.audio.addEventListener('loadstart', () => {
-                    this.updateStatus('connecting', 'Connecting...');
-                });
                 
-                this.audio.addEventListener('canplay', () => {
-                    this.updateStatus('connected', 'Ready to play');
-                });
                 
                 this.audio.addEventListener('playing', () => {
-                    this.updateStatus('connected', 'Playing live stream');
                     this.isPlaying = true;
-                    this.playButton.textContent = '⏸️';
+                    this.playButton.innerHTML = '<i data-lucide="pause" class="play-icon"></i>';
+                    lucide.createIcons();
                     this.startElapsedTimer();
                     this.startMetadataPolling();
                 });
                 
                 this.audio.addEventListener('pause', () => {
-                    this.updateStatus('connected', 'Paused');
                     this.isPlaying = false;
-                    this.playButton.textContent = '▶️';
+                    this.playButton.innerHTML = '<i data-lucide="play" class="play-icon"></i>';
+                    lucide.createIcons();
                     this.stopElapsedTimer();
                     this.stopMetadataPolling();
                 });
                 
-                this.audio.addEventListener('waiting', () => {
-                    this.updateStatus('connecting', 'Buffering...');
-                });
                 
                 this.audio.addEventListener('error', (e) => {
                     console.error('Audio error:', e);
                     this.handleError('Failed to load audio stream');
                 });
                 
-                this.audio.addEventListener('stalled', () => {
-                    this.updateStatus('connecting', 'Stream stalled, reconnecting...');
-                });
             }
             
             togglePlayback() {
@@ -494,17 +492,11 @@
                 }
             }
             
-            updateStatus(type, message) {
-                this.statusDiv.className = `status ${type}`;
-                this.statusDiv.textContent = message;
-                this.hideError();
-            }
-            
             handleError(message) {
-                this.updateStatus('disconnected', 'Connection failed');
                 this.showError(message);
                 this.isPlaying = false;
-                this.playButton.textContent = '▶️';
+                this.playButton.innerHTML = '<i data-lucide="play" class="play-icon"></i>';
+                lucide.createIcons();
                 this.stopElapsedTimer();
                 this.stopMetadataPolling();
             }
@@ -530,16 +522,18 @@
                     clearInterval(this.elapsedInterval);
                     this.elapsedInterval = null;
                 }
-                this.elapsedTimeDiv.textContent = 'Elapsed: 00:00';
+                if (this.timeDisplay) {
+                    this.timeDisplay.textContent = '0:00 / Live';
+                }
             }
             
             updateElapsedTime() {
-                if (this.startTime) {
+                if (this.startTime && this.timeDisplay) {
                     const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
                     const minutes = Math.floor(elapsed / 60);
                     const seconds = elapsed % 60;
-                    const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                    this.elapsedTimeDiv.textContent = `Elapsed: ${timeString}`;
+                    const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    this.timeDisplay.textContent = `${timeString} / Live`;
                 }
             }
             
@@ -560,21 +554,28 @@
             
             updateTrackInfo(metadata) {
                 if (metadata && metadata.artist && metadata.title) {
-                    let trackHtml = `<strong>${metadata.artist}</strong><br>${metadata.title}`;
+                    // Update artist name in banner
+                    const artistName = document.getElementById('artistName');
+                    const trackTitle = document.getElementById('trackTitle');
+                    const songTitle = document.getElementById('songTitle');
+                    const albumInfo = document.getElementById('albumInfo');
+                    const qualityInfo = document.getElementById('qualityInfo');
                     
-                    if (metadata.album) {
-                        trackHtml += `<br><em>${metadata.album}</em>`;
-                        
+                    if (artistName) artistName.textContent = metadata.artist.toUpperCase();
+                    if (trackTitle) trackTitle.textContent = metadata.artist;
+                    if (songTitle) {
+                        let titleText = metadata.title;
                         if (metadata.date) {
-                            trackHtml += ` (${metadata.date})`;
+                            titleText += ` (${metadata.date})`;
                         }
+                        songTitle.textContent = titleText;
                     }
-                    
-                    if (metadata.bit_depth && metadata.sample_rate) {
-                        trackHtml += `<br><small>${metadata.bit_depth}-bit • ${metadata.sample_rate.toLocaleString()} Hz</small>`;
+                    if (albumInfo && metadata.album) {
+                        albumInfo.textContent = metadata.album;
                     }
-                    
-                    this.currentTrackDiv.innerHTML = trackHtml;
+                    if (qualityInfo && metadata.bit_depth && metadata.sample_rate) {
+                        qualityInfo.innerHTML = `Source quality: ${metadata.bit_depth}-bit ${metadata.sample_rate.toLocaleString()}Hz<br>Stream quality: 48kHz FLAC / HLS Lossless`;
+                    }
                     
                     // Update voting info if track changed
                     const newSong = {
@@ -593,7 +594,17 @@
                         this.updateVotingInfo();
                     }
                 } else {
-                    this.currentTrackDiv.textContent = 'Track info unavailable';
+                    // Set default values when no track info
+                    const artistName = document.getElementById('artistName');
+                    const trackTitle = document.getElementById('trackTitle');
+                    const songTitle = document.getElementById('songTitle');
+                    const albumInfo = document.getElementById('albumInfo');
+                    
+                    if (artistName) artistName.textContent = 'RADIO CALICO';
+                    if (trackTitle) trackTitle.textContent = 'Loading...';
+                    if (songTitle) songTitle.textContent = 'Track info unavailable';
+                    if (albumInfo) albumInfo.textContent = '';
+                    
                     this.currentSong = null;
                     this.resetVotingUI();
                 }
@@ -673,8 +684,6 @@
                         const data = await response.json();
                         console.log('Vote info received:', data);
                         this.currentSong.songId = data.songId;
-                        this.likeCountDiv.textContent = data.likes;
-                        this.dislikeCountDiv.textContent = data.dislikes;
                         
                         // Get user's current vote
                         this.getUserVote();
@@ -725,8 +734,6 @@
                     
                     if (response.ok) {
                         const data = await response.json();
-                        this.likeCountDiv.textContent = data.likes;
-                        this.dislikeCountDiv.textContent = data.dislikes;
                         this.updateVoteButtons(data.userVote);
                     }
                 } catch (error) {
@@ -746,8 +753,6 @@
             }
             
             resetVotingUI() {
-                this.likeCountDiv.textContent = '0';
-                this.dislikeCountDiv.textContent = '0';
                 this.likeButton.classList.remove('liked');
                 this.dislikeButton.classList.remove('disliked');
             }
@@ -756,6 +761,8 @@
         // Initialize the radio player when the page loads
         document.addEventListener('DOMContentLoaded', () => {
             new RadioPlayer();
+            // Initialize Lucide icons
+            lucide.createIcons();
         });
     </script>
 </body>

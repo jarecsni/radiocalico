@@ -11,6 +11,7 @@ class RadioPlayer {
         this.dislikeButton = document.getElementById('dislikeButton');
         this.streamUrl = 'https://d3d4yli4hf5bmh.cloudfront.net/hls/live.m3u8';
         this.metadataUrl = 'https://d3d4yli4hf5bmh.cloudfront.net/metadatav2.json';
+        this.DEFAULT_STREAM_QUALITY = '48kHz FLAC / HLS Lossless';
         this.hls = null;
         this.isPlaying = false;
         this.startTime = null;
@@ -196,7 +197,7 @@ class RadioPlayer {
                 }
                 
                 // Stream quality - check if available in metadata, otherwise use default
-                const streamQuality = metadata.stream_quality || '48kHz FLAC / HLS Lossless';
+                const streamQuality = metadata.stream_quality || this.DEFAULT_STREAM_QUALITY;
                 qualityText += `Stream quality: ${streamQuality}`;
                 
                 qualityInfo.innerHTML = qualityText;

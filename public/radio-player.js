@@ -185,8 +185,21 @@ class RadioPlayer {
             if (albumInfo && metadata.album) {
                 albumInfo.textContent = metadata.album;
             }
-            if (qualityInfo && metadata.bit_depth && metadata.sample_rate) {
-                qualityInfo.innerHTML = `Source quality: ${metadata.bit_depth}-bit ${metadata.sample_rate.toLocaleString()}Hz<br>Stream quality: 48kHz FLAC / HLS Lossless`;
+            if (qualityInfo) {
+                let qualityText = '';
+                
+                // Source quality from metadata
+                if (metadata.bit_depth && metadata.sample_rate) {
+                    qualityText += `Source quality: ${metadata.bit_depth}-bit ${metadata.sample_rate.toLocaleString()}Hz<br>`;
+                } else {
+                    qualityText += 'Source quality: Unknown<br>';
+                }
+                
+                // Stream quality - check if available in metadata, otherwise use default
+                const streamQuality = metadata.stream_quality || '48kHz FLAC / HLS Lossless';
+                qualityText += `Stream quality: ${streamQuality}`;
+                
+                qualityInfo.innerHTML = qualityText;
             }
             
             // Update voting info if track changed

@@ -10,6 +10,11 @@ Radio Calico is a web-based live radio streaming application with user voting fu
 
 - **Start server**: `npm start` or `node server.js` (runs on http://localhost:3000)
 - **Install dependencies**: `npm install`
+- **Run tests**: `npm test` (runs all 71 tests)
+- **Backend tests**: `npm run test:backend` (30 tests)
+- **Frontend tests**: `npm run test:frontend` (41 tests)
+- **Test coverage**: `npm run test:coverage`
+- **Watch mode**: `npm run test:watch`
 
 ## Architecture
 
@@ -80,6 +85,7 @@ Radio Calico is a web-based live radio streaming application with user voting fu
 
 ## File Structure
 
+### Core Application
 - `server.js` - Main Express application
 - `users.db` - SQLite database (auto-created)
 - `public/radio.html` - Main radio player interface
@@ -88,6 +94,21 @@ Radio Calico is a web-based live radio streaming application with user voting fu
 - `public/index.html` - User management interface (served as `/`)
 - `public/user-management.css` - User management styling (162 lines)
 - `public/RadioCalicoLogoTM.png` - Logo asset
+
+### Testing Framework
+- `jest.config.js` - Jest configuration with dual projects
+- `TESTING.md` - Comprehensive testing documentation
+- `tests/backend/` - Backend test suite (30 tests)
+  - `setup.js` - Backend test configuration
+  - `api.test.js` - API endpoint tests (17 tests)
+  - `database.test.js` - Database operation tests (13 tests)
+- `tests/frontend/` - Frontend test suite (41 tests)
+  - `setup.js` - Frontend test configuration with mocks
+  - `RadioPlayer.test.js` - RadioPlayer class tests (25 tests)
+  - `voting.test.js` - Voting system tests (16 tests)
+  - `__mocks__/hls.js` - HLS.js mock implementation
+
+### Documentation & Assets
 - `RadioCalico_Style_Guide.txt` - Complete brand guidelines
 - `RadioCalicoLayout.png` - Visual layout reference for UI design
 - `stream_URL.txt` - Stream endpoint reference
@@ -132,3 +153,41 @@ votes (id, song_id, user_id, vote_type, created_at)
 - **Error handling** for stream failures and reconnection
 - **Metadata synchronization** between stream and display
 - **Icon state management** for play/pause button transitions
+
+## Testing Framework
+
+### Overview
+Comprehensive Jest-based testing framework covering both frontend and backend ratings system with **71 total tests** across 4 test suites.
+
+### Test Coverage
+- **Backend Tests (30 total)**:
+  - API endpoint tests (17) - all REST endpoints with validation
+  - Database operation tests (13) - CRUD operations and constraints
+  - In-memory SQLite for isolated testing
+  - Supertest for realistic HTTP request testing
+
+- **Frontend Tests (41 total)**:
+  - RadioPlayer class tests (25) - audio controls, HLS integration, metadata
+  - Voting system tests (16) - UI interactions, API integration, state management
+  - Complete DOM mocking with jsdom
+  - External service mocking (HLS.js, fetch API, localStorage)
+
+### Key Testing Features
+- **Isolated Testing**: In-memory database and comprehensive mocking
+- **Real API Testing**: Actual HTTP requests with Supertest
+- **Error Scenario Coverage**: Network failures, validation errors, constraint violations
+- **UI State Testing**: Button states, user interactions, timer functionality
+- **Async Operation Testing**: Proper handling of promises and async/await
+
+### Test Dependencies
+- **jest**: Primary test runner with dual project configuration
+- **supertest**: HTTP assertion testing for API endpoints
+- **jsdom**: Browser environment simulation for frontend tests
+- **jest-fetch-mock**: Fetch API mocking for external service calls
+
+### Running Tests
+See `TESTING.md` for comprehensive documentation including:
+- Test execution strategies
+- Mock implementation details
+- Debugging procedures
+- Extension guidelines for adding new tests

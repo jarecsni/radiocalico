@@ -4,7 +4,11 @@
       "Bash(npm start)",
       "WebFetch(domain:d3d4yli4hf5bmh.cloudfront.net)",
       "Bash(sqlite3:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(git stash:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(gh pr create:*)"
     ],
     "deny": []
   }

@@ -1,0 +1,53 @@
+
+services:
+  # Development Radio Calico service
+  radiocalico-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: radiocalico-dev
+    ports:
+      - "3000:3000"
+    volumes:
+      # Mount source code for hot reload
+      - .:/app
+      - /app/node_modules
+      # Mount database directory for persistence
+      - radiocalico-dev-data:/app/data
+    environment:
+      - NODE_ENV=development
+      - DATABASE_PATH=/app/data/users.db
+    restart: unless-stopped
+    networks:
+      - radiocalico-network
+    healthcheck:
+      test: ["CMD", "node", "-e", "const http = require('http'); const req = http.request({hostname: 'localhost', port: 3000, path: '/', method: 'GET'}, (res) => process.exit(res.statusCode === 200 ? 0 : 1)); req.on('error', () => process.exit(1)); req.end();"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Test service for running tests
+  radiocalico-test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: test
+    container_name: radiocalico-test
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=test
+    networks:
+      - radiocalico-network
+    profiles:
+      - test
+
+volumes:
+  radiocalico-dev-data:
+    driver: local
+
+networks:
+  radiocalico-network:
+    driver: bridge

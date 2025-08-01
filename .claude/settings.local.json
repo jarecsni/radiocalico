@@ -5,7 +5,8 @@
       "WebFetch(domain:d3d4yli4hf5bmh.cloudfront.net)",
       "Bash(sqlite3:*)",
       "Bash(ls:*)",
-      "Bash(git stash:*)"
+      "Bash(git stash:*)",
+      "Bash(git commit:*)"
     ],
     "deny": []
   }

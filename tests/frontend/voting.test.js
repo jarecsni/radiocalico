@@ -12,7 +12,7 @@ class MockVotingSystem {
   }
 
   generateUserId() {
-    return 'test-user-' + Math.random().toString(36).substr(2, 9);
+    return 'test-user-' + Math.random().toString(36).substring(2, 11);
   }
 
   setCurrentSong(artist, title, album = null) {

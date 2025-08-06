@@ -1,0 +1,89 @@
+
+services:
+  # Production Radio Calico service
+  radiocalico:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: radiocalico-prod
+    ports:
+      - "3000:3000"
+    volumes:
+      # Persistent volume for database
+      - radiocalico-data:/app/data
+      # Optional: Mount logs directory
+      - radiocalico-logs:/app/logs
+    environment:
+      - NODE_ENV=production
+      - DATABASE_PATH=/app/data/users.db
+      - PORT=3000
+    restart: unless-stopped
+    networks:
+      - radiocalico-network
+    healthcheck:
+      test: ["CMD", "node", "-e", "const http = require('http'); const req = http.request({hostname: 'localhost', port: 3000, path: '/', method: 'GET'}, (res) => process.exit(res.statusCode === 200 ? 0 : 1)); req.on('error', () => process.exit(1)); req.end();"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+
+  # Nginx reverse proxy (optional, for production load balancing)
+  nginx:
+    image: nginx:alpine
+    container_name: radiocalico-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - radiocalico
+    networks:
+      - radiocalico-network
+    profiles:
+      - nginx
+    restart: unless-stopped
+
+  # Monitoring with basic container stats
+  monitoring:
+    image: prom/node-exporter:latest
+    container_name: radiocalico-monitoring
+    ports:
+      - "9100:9100"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    networks:
+      - radiocalico-network
+    profiles:
+      - monitoring
+    restart: unless-stopped
+
+volumes:
+  radiocalico-data:
+    driver: local
+  radiocalico-logs:
+    driver: local
+
+networks:
+  radiocalico-network:
+    driver: bridge

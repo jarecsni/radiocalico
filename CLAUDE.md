@@ -8,13 +8,26 @@ Radio Calico is a web-based live radio streaming application with user voting fu
 
 ## Development Commands
 
+### Local Development
 - **Start server**: `npm start` or `node server.js` (runs on http://localhost:3000)
+- **Development mode**: `npm run dev` (with nodemon hot reload)
 - **Install dependencies**: `npm install`
+
+### Testing
 - **Run tests**: `npm test` (runs all 71 tests)
 - **Backend tests**: `npm run test:backend` (30 tests)
 - **Frontend tests**: `npm run test:frontend` (41 tests)
 - **Test coverage**: `npm run test:coverage`
 - **Watch mode**: `npm run test:watch`
+
+### Docker Deployment
+- **Development**: `npm run docker:dev` or `./deploy.sh dev up`
+- **Production**: `npm run docker:prod` or `./deploy.sh prod up`
+- **Start/Stop**: `./deploy.sh [dev|prod] [start|stop|restart]`
+- **Container Management**: `./deploy.sh [dev|prod] [status|logs|build]`
+- **Run tests**: `npm run docker:test` or `./deploy.sh test`
+- **Health check**: `npm run health` or `./deploy.sh health`
+- **Global Operations**: `./deploy.sh [clean|backup|restore]`
 
 ## Architecture
 
@@ -108,7 +121,19 @@ Radio Calico is a web-based live radio streaming application with user voting fu
   - `voting.test.js` - Voting system tests (16 tests)
   - `__mocks__/hls.js` - HLS.js mock implementation
 
+### Docker & Deployment
+- `Dockerfile` - Multi-stage production build with security hardening
+- `Dockerfile.dev` - Development container with hot reload
+- `docker-compose.yml` - Local development orchestration
+- `docker-compose.prod.yml` - Production deployment with nginx and monitoring
+- `deploy.sh` - Comprehensive deployment script with health checks
+- `healthcheck.js` - Container health monitoring script
+- `nginx.conf` - Production reverse proxy configuration
+- `.dockerignore` - Docker build optimization
+- `DOCKER.md` - Complete containerization documentation
+
 ### Documentation & Assets
+- `README.md` - Project overview and quick start guide
 - `RadioCalico_Style_Guide.txt` - Complete brand guidelines
 - `RadioCalicoLayout.png` - Visual layout reference for UI design
 - `stream_URL.txt` - Stream endpoint reference
@@ -191,3 +216,50 @@ See `TESTING.md` for comprehensive documentation including:
 - Mock implementation details
 - Debugging procedures
 - Extension guidelines for adding new tests
+
+## Docker Containerization
+
+### Overview
+Complete Docker deployment solution with development and production configurations, providing self-contained deployment with comprehensive monitoring and security hardening.
+
+### Container Architecture
+- **Multi-stage Dockerfile**: Optimized builds with separate dev/test/prod stages
+- **Alpine Linux base**: Minimal attack surface (~150MB production image)
+- **Non-root execution**: Security hardened with dedicated user (UID 1001)
+- **Health monitoring**: Built-in health checks and monitoring capabilities
+
+### Deployment Options
+- **Development Environment**: Hot-reload container with full debugging capabilities
+- **Production Environment**: Optimized runtime with Nginx reverse proxy and monitoring
+- **Testing Environment**: Isolated test execution with complete test suite
+
+### Key Features
+- **Self-contained deployment**: No external dependencies required
+- **Data persistence**: Named volumes for database and logs
+- **Load balancing**: Nginx configuration with rate limiting and SSL termination
+- **Monitoring stack**: Optional Prometheus node-exporter integration
+- **Backup/restore**: Automated database backup and restore capabilities
+- **Health checks**: Comprehensive application and system health monitoring
+
+### Quick Deployment
+```bash
+# Development
+./deploy.sh dev up
+
+# Production  
+./deploy.sh prod up
+
+# With monitoring and reverse proxy
+docker-compose -f docker-compose.prod.yml --profile nginx --profile monitoring up -d
+```
+
+### Management Scripts
+- **deploy.sh**: Environment-aware deployment management with dev/prod separation
+- **healthcheck.js**: Comprehensive health monitoring (server, database, memory, uptime)
+- **npm scripts**: Complete Docker command integration with environment-specific operations
+
+See `DOCKER.md` for complete containerization documentation including:
+- Multi-environment deployment strategies
+- Security hardening procedures
+- Scaling and high availability setup
+- Troubleshooting and performance optimization
